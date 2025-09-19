@@ -18,7 +18,6 @@ struct PDFEditorView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     @State private var shareItem: ShareItem?
-
     @State private var currentPageIndex: Int = .zero
 
     var body: some View {
@@ -37,6 +36,7 @@ struct PDFEditorView: View {
             ToolbarItem {
                 Button(role: .destructive) {
                     viewModel.deletePage(at: currentPageIndex)
+                    viewModel.isNeedSaveAfterChange = true
                     if let doc = viewModel.document {
                         currentPageIndex = min(currentPageIndex, max(0, doc.pageCount - 1))
                     } else {
@@ -55,7 +55,7 @@ struct PDFEditorView: View {
                 } label: {
                     Label(String.getWord(by: "saveTitle"), systemImage: "square.and.arrow.down")
                 }
-                .disabled(viewModel.document == nil)
+                .disabled(viewModel.document == nil || !viewModel.isNeedSaveAfterChange)
             }
 
             ToolbarItem {

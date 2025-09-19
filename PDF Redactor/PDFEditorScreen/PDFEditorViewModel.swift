@@ -18,6 +18,7 @@ final class PDFEditorViewModel: ObservableObject {
     @Published private(set) var document: PDFDocument?
     @Published var showAlert = false
     @Published var titleAlert: String = ""
+    @Published var isNeedSaveAfterChange = false
 
     let persistence = PersistenceController.shared
 
@@ -25,6 +26,7 @@ final class PDFEditorViewModel: ObservableObject {
     init(images: [UIImage]) {
         self.images = images
         self.document = convertImagesToPDF(images: images)
+        self.isNeedSaveAfterChange = true
     }
 
     init(document: PDFDocument) {
