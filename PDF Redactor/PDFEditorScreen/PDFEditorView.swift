@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+internal import PDFKit
 
 struct ShareItem: Identifiable {
     let url: URL
@@ -18,24 +19,36 @@ struct PDFEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var shareItem: ShareItem?
 
+    @State private var currentPageIndex: Int = .zero
+
     var body: some View {
         Group {
             if let doc = viewModel.document {
-                PDFKitView(document: doc)
+                PDFKitView(document: doc, currentPageIndex: $currentPageIndex)
             } else {
                 Text("Нет документа").foregroundColor(.secondary)
             }
         }
-        
         .alert(viewModel.titleAlert, isPresented: $viewModel.showAlert) {
-            Button("OK", role: .cancel) {
-                dismiss()
-            }
+            Button("OK", role: .cancel) { dismiss() }
         }
-        
-        .navigationTitle("Просмотр PDF")
         .padding()
         .toolbar {
+            ToolbarItem {
+                Button(role: .destructive) {
+                    viewModel.deletePage(at: currentPageIndex)
+                    if let doc = viewModel.document {
+                        currentPageIndex = min(currentPageIndex, max(0, doc.pageCount - 1))
+                    } else {
+                        currentPageIndex = .zero
+                    }
+                } label: {
+                    Label("Удалить страницу", systemImage: "document.on.trash")
+                }
+                .disabled(viewModel.document == nil || viewModel.document?.pageCount ?? 0 == 1)
+                .tint(.red)
+            }
+            
             ToolbarItem {
                 Button {
                     viewModel.saveDocInCoreData(context: viewContext)
@@ -44,7 +57,7 @@ struct PDFEditorView: View {
                 }
                 .disabled(viewModel.document == nil)
             }
-            
+
             ToolbarItem {
                 Button {
                     do {
@@ -59,17 +72,14 @@ struct PDFEditorView: View {
                 .disabled(viewModel.document == nil)
             }
         }
-         .sheet(item: $shareItem) { item in
+        .sheet(item: $shareItem) { item in
             ActivityView(activityItems: [item.url])
         }
     }
 }
 
 #Preview {
-    let testImage = UIImage(systemName: "doc")!
-    let vm = PDFEditorViewModel(images: [testImage])
-    return NavigationView {
-        PDFEditorView(viewModel: vm)
-    }
+    let img = UIImage(systemName: "doc")!
+    let vm = PDFEditorViewModel(images: [img, img, img])
+    return NavigationView { PDFEditorView(viewModel: vm) }
 }
-

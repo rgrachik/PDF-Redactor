@@ -9,7 +9,7 @@ import Combine
 import UIKit
 import SwiftUI
 import CoreData
-import PDFKit
+internal import PDFKit
 
 final class AddDocumentViewModel: ObservableObject {
     
@@ -50,7 +50,6 @@ final class AddDocumentViewModel: ObservableObject {
         return page.thumbnail(of: size, for: .mediaBox)
     }
 }
-
 
 extension AddDocumentViewModel {
     

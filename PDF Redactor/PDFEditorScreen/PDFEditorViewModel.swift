@@ -7,44 +7,41 @@
 
 import Combine
 import UIKit
-import PDFKit
+internal import PDFKit
 import CoreData
 import SwiftUI
 
 final class PDFEditorViewModel: ObservableObject {
-    
+
     // MARK: - Properties
     private var images: [UIImage] = []
     @Published private(set) var document: PDFDocument?
     @Published var showAlert = false
     @Published var titleAlert: String = ""
-    
+
     let persistence = PersistenceController.shared
-    
+
     // MARK: - Init
     init(images: [UIImage]) {
         self.images = images
         self.document = convertImagesToPDF(images: images)
     }
-    
+
     init(document: PDFDocument) {
         self.document = document
     }
-    
+
     // MARK: - Public API
-    
-    /// Пересобрать документ (если массив картинок изменился)
+
     func rebuild(with images: [UIImage]? = nil) {
         if let images { self.images = images }
         self.document = convertImagesToPDF(images: self.images)
     }
-    
-    /// Получить PDF как Data
+
     func pdfData() -> Data? {
         document?.dataRepresentation()
     }
-    
-    /// Экспортировать PDF во временную директорию и вернуть URL
+
     @discardableResult
     func export(fileName: String = "Document.pdf") throws -> URL {
         guard let data = pdfData() else { throw PDFError.noDocument }
@@ -52,17 +49,17 @@ final class PDFEditorViewModel: ObservableObject {
         try data.write(to: url, options: .atomic)
         return url
     }
-    
+
     func saveDocInCoreData(context: NSManagedObjectContext) {
         guard let data = pdfData() else {
             debugPrint("saveDocInCoreData error")
             return
         }
-        
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy-HH:mm:ss"
         let formattedDate = dateFormatter.string(from: Date())
-        
+
         persistence.savePDFDocument(
             name: formattedDate,
             createDate: formattedDate,
@@ -74,6 +71,12 @@ final class PDFEditorViewModel: ObservableObject {
         }
     }
     
+    func deletePage(at index: Int) {
+        guard let doc = document, index >= 0, index < doc.pageCount else { return }
+        doc.removePage(at: index)
+        document = (doc.pageCount > 0) ? (doc.copy() as? PDFDocument) : nil
+    }
+
     // MARK: - Private
 
     private func convertImagesToPDF(images: [UIImage]) -> PDFDocument? {
@@ -86,10 +89,8 @@ final class PDFEditorViewModel: ObservableObject {
         }
         return pdf
     }
-    
+
     enum PDFError: Error {
         case noDocument
     }
 }
-
- 
