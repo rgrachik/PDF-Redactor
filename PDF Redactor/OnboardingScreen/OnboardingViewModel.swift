@@ -11,12 +11,6 @@ import Foundation
 @MainActor
 final class OnboardingViewModel: ObservableObject {
     
-    // MARK: - Constants
-    
-    private enum Constants {
-        
-    }
-    
     // MARK: - Properties
     
     @Published var image: ImageResource = ImageResource(name: "pdfGet", bundle: .main)

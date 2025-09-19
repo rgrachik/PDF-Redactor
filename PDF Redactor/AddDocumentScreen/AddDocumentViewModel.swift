@@ -17,6 +17,7 @@ final class AddDocumentViewModel: ObservableObject {
     
     @Published var selectedImages: [UIImage] = []
     @Published var documents: [PDFSavedDocument] = []
+    @Published var selectedDocumentForMerge: PDFSavedDocument?
     
     func loadDocuments(context: NSManagedObjectContext) {
         documents = PersistenceController.shared.fetchAllDocuments(context: context)

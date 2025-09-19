@@ -17,6 +17,7 @@ struct AddDocumentView: View {
     @State private var isPhotoPickerPresented = false
     @State private var isFilesImporterPresented = false
     @State private var goToPreview = false
+    @State private var shouldNavigateToMerge = false
     @Environment(\.managedObjectContext) private var viewContext
     
     var body: some View {
@@ -26,6 +27,13 @@ struct AddDocumentView: View {
                     destination: PDFEditorView(viewModel: PDFEditorViewModel(images: viewModel.selectedImages)),
                     isActive: $goToPreview
                 ) { EmptyView() }.hidden()
+                
+                if let selectedDoc = viewModel.selectedDocumentForMerge {
+                    NavigationLink(
+                        destination: MergeDocumentView(viewModel: MergeDocumentViewModel(selectedDocument: selectedDoc)),
+                        isActive: $shouldNavigateToMerge
+                    ) { EmptyView() }.hidden()
+                }
                 
                 List(viewModel.documents) { document in
                     
@@ -46,9 +54,10 @@ struct AddDocumentView: View {
                         }
                         
                         Button {
-                            //                         Выбрать документы для объединения в новый
+                            viewModel.selectedDocumentForMerge = document
+                            shouldNavigateToMerge = true
                         } label: {
-                            Label("Объединить", systemImage: "pencil")
+                            Label("Объединить", systemImage: "doc.on.doc")
                         }
                         
                         Button(role: .destructive) {
@@ -139,9 +148,4 @@ struct AddDocumentView: View {
             }
         }
     }
-
-}
-
-#Preview {
-    AddDocumentView(viewModel: AddDocumentViewModel())
 }

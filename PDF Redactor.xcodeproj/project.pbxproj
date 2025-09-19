@@ -10,22 +10,9 @@
 		E9E93E502E79B0E100277B48 /* PDF Redactor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PDF Redactor.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		E9E758DE2E7C94930037048C /* Exceptions for "PDF Redactor" folder in "PDF Redactor" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"PDF-Redactor-Info.plist",
-			);
-			target = E9E93E4F2E79B0E100277B48 /* PDF Redactor */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E9E93E522E79B0E100277B48 /* PDF Redactor */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				E9E758DE2E7C94930037048C /* Exceptions for "PDF Redactor" folder in "PDF Redactor" target */,
-			);
 			path = "PDF Redactor";
 			sourceTree = "<group>";
 		};
